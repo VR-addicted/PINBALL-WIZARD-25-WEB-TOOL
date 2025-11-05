@@ -120,7 +120,6 @@ async function showWelcomeMessage() {
     const res = await fetch("welcome_msg.txt", { cache: "no-store" });
     if (!res.ok) throw new Error("Not found");
     const text = await res.text();
-    //appendTerminal(text.trim() + "\n\n");
     terminalView.innerHTML += `<pre>${text}</pre>\n`;
 
   } catch {
@@ -128,7 +127,11 @@ async function showWelcomeMessage() {
   }
 }
 
-    
+
+
+
+
+
     // 🆕 Versionsprüfung beim Start
     const versionFiles = [
       { name: "pbw25-dev.txt", label: "PBW25-dev" },
