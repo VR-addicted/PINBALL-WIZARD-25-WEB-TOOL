@@ -93,9 +93,11 @@
 
     const statusEl = document.getElementById('status');
     const terminalView = document.getElementById('terminalView');
-    document.addEventListener("DOMContentLoaded", () => {
-  checkFirmwareVersions();
+document.addEventListener("DOMContentLoaded", async () => {
+  await showWelcomeMessage();
+  await checkFirmwareVersions();
 });
+
 
     const macInput = document.getElementById('macInput');
     const scrollLockChk = document.getElementById('scrollLockChk');
@@ -113,6 +115,18 @@
       if (autoScroll) terminalView.scrollTop = terminalView.scrollHeight;
     }
 
+async function showWelcomeMessage() {
+  try {
+    const res = await fetch("welcome_msg.txt", { cache: "no-store" });
+    if (!res.ok) throw new Error("Not found");
+    const text = await res.text();
+    //appendTerminal(text.trim() + "\n\n");
+    terminalView.innerHTML += `<pre>${text}</pre>\n`;
+
+  } catch {
+    appendTerminal("[Willkommensnachricht nicht gefunden]\n");
+  }
+}
 
     
     // 🆕 Versionsprüfung beim Start
