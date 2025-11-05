@@ -46,7 +46,7 @@
       <label for="fwSelect">Firmware</label>
       <select id="fwSelect">
         <option value="pbw25-dev">PBW25-dev</option>
-        <option value="pbw25-dgb">PBW25-dgb</option>
+        <option value="pbw25-dbg">PBW25-dbg</option>
         <option value="pbw25-stable">PBW25-stable</option>
         <option value="pedal-stable">PEDAL-stable</option>
         <option value="pedal-nightly">PEDAL-nightly</option>
@@ -119,7 +119,7 @@
     const versionFiles = [
       { name: "pbw25-dev.txt", label: "PBW25-dev" },
       { name: "pbw25-stable.txt", label: "PBW25-stable" },
-      { name: "pbw25-dgb.txt", label: "PBW25-dgb" }
+      { name: "pbw25-dbg.txt", label: "PBW25-dbg" }
     ];
 
     async function checkFirmwareVersions() {
@@ -128,9 +128,9 @@
           const res = await fetch(vf.name, { cache: "no-store" });
           if (!res.ok) throw new Error("Not found");
           const text = await res.text();
-          appendTerminal(`${vf.label} Version 1. ${text.trim()}\n`);
+          appendTerminal(`${vf.label} Version 1.${text.trim()}\n`);
         } catch {
-          appendTerminal(`${vf.label} Version 1. [${vf.name} nicht auf Netlify vorhanden]\n`);
+          appendTerminal(`${vf.label} Version 1.[${vf.name} nicht auf Netlify vorhanden]\n`);
           appendTerminal(`→ Check my direct repo:\nhttps://github.com/VR-addicted/PINBALL-WIZARD-25-WEB-TOOL\n\n`);
         }
       }
