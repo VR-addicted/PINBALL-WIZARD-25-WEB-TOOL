@@ -45,200 +45,9 @@
     <div class="row">
       <label for="fwSelect">Firmware</label>
       <select id="fwSelect">
-        <option value="pbw25-dev">PBW25-dev</option>
-        <option value="pbw25-dbg">PBW25-dbg</option>
-        <option value="pbw25-stable">PBW25-stable</option>
-        <option value="pedal-stable">PEDAL-stable</option>
-        <option value="pedal-nightly">PEDAL-nightly</option>
-        <option value="custom">Custom</option>
-      </select>
-      <button id="flashBtn">Flashen</button>
-      <button id="clearNvsBtn">CLEAR NVS NOW</button>
-      <span id="flashStatus">Bereit</span>
-    </div>
-
-    <div id="customRow" class="row" style="display:none;">
-      <label for="customFile">Custom Firmware</label>
-      <input type="file" id="customFile" accept=".bin" />
-    </div>
-
-    <div class="row">
-      <label for="macInput">ESPNOW MAC</label>
-      <input type="text" id="macInput" value="00:00:00:00:00:00" />
-      <button id="sendMacBtn">Senden</button>
-    </div>
-
-    <div class="row" style="flex-direction:column; align-items:flex-start;">
-      <span>Terminal</span>
-      <div id="terminalView" class="terminal"></div>
-      <div class="scrollLockBox">
-        <input type="checkbox" id="scrollLockChk" />
-        <span>Scroll Lock</span>
-      </div>
-    </div>
-
-    <div class="row" style="justify-content:flex-start;">
-      <input type="text" id="terminalInput" placeholder="UART Befehl..." />
-      <button id="sendTermBtn">Senden</button>
-    </div>
-  </div>
-
-  <script type="module">
-    import { ESPLoader, Transport } from "./bundle.js";
-
-    let portTerminal, reader, writer;
-    let portFlash;
-    let mode = "terminal";
-    let autoScroll = true;
-
-    const statusEl = document.getElementById('status');
-    const terminalView = document.getElementById('terminalView');
-document.addEventListener("DOMContentLoaded", async () => {
-  await showWelcomeMessage();
-  await checkFirmwareVersions();
-});
-
-
-    const macInput = document.getElementById('macInput');
-    const scrollLockChk = document.getElementById('scrollLockChk');
-    const flashStatusEl = document.getElementById('flashStatus');
-    const customFile = document.getElementById('customFile');
-    const fwSelect = document.getElementById('fwSelect');
-    const disconnectBtn = document.getElementById('disconnectBtn');
-    const flashBtn = document.getElementById('flashBtn');
-
-    function appendTerminal(text) {
-      text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-      terminalView.textContent += text;
-      const lines = terminalView.textContent.split(/\n/);
-      if (lines.length > 1000) terminalView.textContent = lines.slice(-1000).join("\n");
-      if (autoScroll) terminalView.scrollTop = terminalView.scrollHeight;
-    }
-
-async function showWelcomeMessage() {
-  try {
-    const res = await fetch("welcome_msg.txt", { cache: "no-store" });
-    if (!res.ok) throw new Error("Not found");
-    const text = await res.text();
-    terminalView.innerHTML += `<pre>${text}</pre>\n`;
-
-  } catch {
-    appendTerminal("[Willkommensnachricht nicht gefunden]\n");
-  }
-}
-
-
-
-
-
-
-    // 🆕 Versionsprüfung beim Start
-    const versionFiles = [
-      { name: "pbw25-dev.txt", label: "PBW25-dev" },
-      { name: "pbw25-stable.txt", label: "PBW25-stable" },
-      { name: "pbw25-dbg.txt", label: "PBW25-dbg" }
-    ];
-
-    async function checkFirmwareVersions() {
-      for (const vf of versionFiles) {
-        try {
-          const res = await fetch(vf.name, { cache: "no-store" });
-          if (!res.ok) throw new Error("Not found");
-          const text = await res.text();
-          appendTerminal(`${vf.label} Version 1.${text.trim()}\n`);
-        } catch {
-          appendTerminal(`${vf.label} Version 1.[${vf.name} nicht auf Netlify vorhanden]\n`);
-          appendTerminal(`→ Check my direct repo:\nhttps://github.com/VR-addicted/PINBALL-WIZARD-25-WEB-TOOL\n\n`);
-        }
-      }
-    }
-
-    // Event-Handler
-    document.getElementById("connectBtn").onclick = connectSerial;
-    document.getElementById("disconnectBtn").onclick = disconnectSerial;
-    document.getElementById("sendTermBtn").onclick = () => {
-      const val = document.getElementById("terminalInput").value.trim();
-      if (val) {
-        sendLine(val);
-        document.getElementById("terminalInput").value = "";
-      }
-    };
-    document.getElementById("terminalInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") document.getElementById("sendTermBtn").click();
-    });
-    document.getElementById("sendMacBtn").onclick = () => {
-      const v = macInput.value.trim();
-      if (/^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$/.test(v)) sendLine("mac=" + v.toUpperCase());
-      else appendTerminal("[MAC ungültig]\n");
-    };
-    document.getElementById("clearNvsBtn").onclick = () => sendLine("nvs_clean");
-    scrollLockChk.addEventListener("change", () => autoScroll = !scrollLockChk.checked);
-    fwSelect.addEventListener("change", () => {
-      document.getElementById("customRow").style.display =
-        fwSelect.value === "custom" ? "flex" : "none";
-    });
-
-    // 🆕 Starte Versionsprüfung
-    checkFirmwareVersions();
-//setTimeout(checkFirmwareVersions, 500);
-    // ... dein bestehender Flash-Code bleibt unverändert ...
-  </script>
-</body>
-</html>
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pinball Wizard Tool</title>
-  <style>
-    :root {
-      --c64-border: #2a2188;
-      --c64-screen: #5f5fd3;
-      --c64-text: #b8b8ff;
-      --c64-ok: #a8c4ff;
-      --c64-err: #ff4d4d;
-    }
-    html, body { height: 100%; margin: 0; font-family: monospace; background: var(--c64-border); color: var(--c64-text); }
-    .screen { margin: 32px auto; max-width: 1000px; padding: 60px; background: var(--c64-screen); border: 60px solid var(--c64-border); }
-    h1 { text-align: center; text-transform: uppercase; margin-top: 0; }
-    .row { display: flex; gap: 12px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
-    select, input[type="text"], input[type="file"], button {
-      background: #2f2fa2; color: var(--c64-text);
-      border: 2px solid var(--c64-border); padding: 6px 10px; cursor: pointer;
-    }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .terminal {
-      background: #231b76; border: 2px solid var(--c64-border);
-      padding: 8px; width: 100%; min-height: 20em; max-height: 40em;
-      overflow-y: auto; white-space: pre-wrap; font-size: 14px; line-height: 1.2em;
-    }
-    #terminalInput { flex: 1; min-width: 300px; }
-    .scrollLockBox { display: flex; align-items: center; gap: 8px; margin-top: 4px; user-select: none; }
-    .input-ok { color: var(--c64-ok); border-color: #8ea6ff; }
-    .input-err { color: var(--c64-err); border-color: var(--c64-err); }
-  </style>
-</head>
-<body>
-  <div class="screen">
-    <h1>Pinball Wizard 2025 Tool</h1>
-
-    <div class="row">
-      <button id="connectBtn">Port wählen & verbinden (115200)</button>
-      <button id="disconnectBtn" disabled>Trennen</button>
-      <span id="status">Status: </span>
-    </div>
-
-    <div class="row">
-      <label for="fwSelect">Firmware</label>
-      <select id="fwSelect">
         <option value="pbw25-stable">PBW25-stable</option>
         <option value="pbw25-nightly">PBW25-nightly</option>
+        <option value="pbw25-dbg">PBW25-dbg</option>
         <option value="pedal-stable">PEDAL-stable</option>
         <option value="pedal-nightly">PEDAL-nightly</option>
         <option value="custom">Custom</option>
@@ -254,7 +63,7 @@ async function showWelcomeMessage() {
     </div>
 
     <div class="row">
-      <label for="macInput">ESPNOW MAC</label>
+      <label for="macInput">ESPNOW MAC PEDAL</label>
       <input type="text" id="macInput" value="00:00:00:00:00:00" />
       <button id="sendMacBtn">Senden</button>
     </div>
@@ -512,6 +321,14 @@ flashBtn.addEventListener("click", async () => {
         "https://raw.githubusercontent.com/youruser/yourrepo/main/firmware/bootloader.bin");
       partitionsBuf = await fetchBinaryWithFallback("./partitions.bin",
         "https://raw.githubusercontent.com/youruser/yourrepo/main/firmware/partitions.bin");
+    } else if (channel === "pbw25-dbg") {
+      label = "PBW25-dbg";
+      buf = await fetchBinaryWithFallback("./pbw25-dbg.bin",
+        "https://raw.githubusercontent.com/youruser/yourrepo/main/firmware/pbw25-dbg.bin");
+      bootloaderBuf = await fetchBinaryWithFallback("./bootloader.bin",
+        "https://raw.githubusercontent.com/youruser/yourrepo/main/firmware/bootloader.bin");
+      partitionsBuf = await fetchBinaryWithFallback("./partitions.bin",
+        "https://raw.githubusercontent.com/youruser/yourrepo/main/firmware/partitions.bin");
     } else if (channel === "pedal-stable") {
       label = "PEDAL-stable";
       buf = await fetchBinaryWithFallback("./pedal-stable.bin",
@@ -709,4 +526,4 @@ async function flashFirmware(arrayBuffer, label, bootloaderBuf, partitionsBuf) {
 
   </script>
 </body>
-</html> -->
+</html>
