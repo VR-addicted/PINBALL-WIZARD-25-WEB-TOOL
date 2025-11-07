@@ -2,7 +2,9 @@
 
 
 The easiest possible way: Use it on the website. 
-
+<div>
+<img src="pbw25-c64.jpg" width="200">
+</div>
 
 https://pinball-wizard-25.netlify.app/
 
