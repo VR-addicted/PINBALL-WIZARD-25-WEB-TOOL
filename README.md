@@ -8,8 +8,8 @@ The easiest possible way: Use it on the website.
 </div>
 
 https://pinball-wizard-25.netlify.app/
-https://pinball-wizard-25.netlify.app/
-https://pinball-wizard-25.netlify.app/
+<h2><a href="https://pinball-wizard-25.netlify.app/" target="_blank">FLASH DEVICE NOW LIVE</a></h2>
+
 
 
 or download complete folder.
@@ -22,9 +22,8 @@ Get sure you have Python installed and check "set PATH" in Python`s installer!
 https://www.python.org/downloads/windows/
 
 
-**Go into your browser and type: localhost:8000
 <h2>Go into your browser and type: <code>localhost:8000</code></h2>
-**Go into your browser and type:** `localhost:8000`
+
 
 
 
