@@ -7,8 +7,8 @@ The easiest possible way: Use it on the website.
 <img src="pbw25-c64.jpg" width="600">
 </div>
 
-https://pinball-wizard-25.netlify.app/
-<h2><a href="https://pinball-wizard-25.netlify.app/" target="_blank">FLASH DEVICE NOW LIVE</a></h2>
+
+<h2><a href="https://pinball-wizard-25.netlify.app/" target="_blank">FLASH DEVICE NOW LIVE on https://pinball-wizard-25.netlify.app/</a></h2>
 
 
 
